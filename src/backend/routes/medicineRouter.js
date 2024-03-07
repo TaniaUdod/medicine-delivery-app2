@@ -3,9 +3,6 @@ const { getAllMedicines } = require("../controllers/medicineController");
 
 const medicineRouter = express.Router();
 
-medicineRouter.get(
-  "https://medicine-delivery-app2.onrender.com/",
-  getAllMedicines
-);
+medicineRouter.get("/", getAllMedicines);
 
 module.exports = medicineRouter;

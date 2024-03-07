@@ -1,5 +1,4 @@
 const express = require("express");
-// const morgan = require("morgan");
 const cors = require("cors");
 
 const path = require("path");
@@ -15,7 +14,6 @@ const app = express();
 
 app.use(express.static(buildPath));
 
-// app.use(morgan("tiny"));
 app.use(cors());
 app.use(express.json());
 

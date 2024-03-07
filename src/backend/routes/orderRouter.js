@@ -3,6 +3,6 @@ const { addOrder } = require("../controllers/orderController");
 
 const orderRouter = express.Router();
 
-orderRouter.post("https://medicine-delivery-app2.onrender.com/", addOrder);
+orderRouter.post("/", addOrder);
 
 module.exports = orderRouter;
