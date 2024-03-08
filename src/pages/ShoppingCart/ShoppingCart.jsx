@@ -1,10 +1,12 @@
-import React, { useState } from 'react';
-import { orderService } from '../../services/ordersService';
-import { useCart } from '../../components/hooks/useCart';
-import Cart from '../../components/Cart/Cart';
-import CartForm from '../../components/CartForm/CartForm';
-import Loader from '../../components/Loader/Loader';
-import { Button } from '../../components/MedicineList/MedicineList.styled';
+import React, { useState } from "react";
+import { orderService } from "../../services/ordersService";
+import { useCart } from "../../components/hooks/useCart";
+import Cart from "../../components/Cart/Cart";
+import CartForm from "../../components/CartForm/CartForm";
+import Loader from "../../components/Loader/Loader";
+import { Button } from "../../components/MedicineList/MedicineList.styled";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const ShoppingCart = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -12,13 +14,13 @@ const ShoppingCart = () => {
   const { cart, clearCart } = useCart();
 
   const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    phone: '',
-    address: '',
+    name: "",
+    email: "",
+    phone: "",
+    address: "",
   });
 
-  const handleInputChange = event => {
+  const handleInputChange = (event) => {
     const { name, value } = event.target;
     setFormData({
       ...formData,
@@ -26,7 +28,15 @@ const ShoppingCart = () => {
     });
   };
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    const { name, email, phone, address } = formData;
+
+    if (!name || !email || !phone || !address) {
+      toast.error("Please fill in all fields");
+      return;
+    }
+
     setIsLoading(true);
 
     try {
@@ -42,33 +52,37 @@ const ShoppingCart = () => {
       await orderService.submitOrder(orderData);
 
       setFormData({
-        name: '',
-        email: '',
-        phone: '',
-        address: '',
+        name: "",
+        email: "",
+        phone: "",
+        address: "",
       });
+
+      localStorage.removeItem("cart");
+
+      toast.success("Order submitted successfully!");
 
       clearCart();
     } catch (error) {
-      console.error('Error submitting order:', error);
+      console.error("Error submitting order:", error);
     } finally {
       setIsLoading(false);
     }
   };
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column' }}>
+    <div style={{ display: "flex", flexDirection: "column" }}>
       {isLoading && <Loader />}
 
-      <div style={{ display: 'flex' }}>
-        <div style={{ flex: '1' }}>
+      <div style={{ display: "flex" }}>
+        <div style={{ flex: "1" }}>
           <CartForm formData={formData} handleInputChange={handleInputChange} />
         </div>
-        <div style={{ flex: '1', marginLeft: '20px' }}>
+        <div style={{ flex: "1", marginLeft: "20px" }}>
           {cart.cartItems.length ? (
             <Cart cartItems={cart.items} />
           ) : (
-            <p style={{ fontWeight: 'bold', textAlign: 'center' }}>
+            <p style={{ fontWeight: "bold", textAlign: "center" }}>
               The basket is empty. There are no products added to the cart.
             </p>
           )}
@@ -77,20 +91,20 @@ const ShoppingCart = () => {
 
       <div
         style={{
-          display: 'flex',
-          justifyContent: 'space-around',
-          marginTop: '20px',
+          display: "flex",
+          justifyContent: "space-around",
+          marginTop: "20px",
         }}
       >
         <div>
           <p>
             <span
               style={{
-                fontWeight: 'bold',
+                fontWeight: "bold",
               }}
             >
               Total Price:
-            </span>{' '}
+            </span>{" "}
             ${cart.totalPrice}
           </p>
         </div>
@@ -98,6 +112,7 @@ const ShoppingCart = () => {
           <Button onClick={handleSubmit}>Submit</Button>
         </div>
       </div>
+      <ToastContainer />
     </div>
   );
 };

@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useEffect, useState } from 'react';
+import React, { createContext, useContext, useEffect, useState } from "react";
 
 const CartContext = createContext({});
 
@@ -11,19 +11,27 @@ export function CartProvider({ children }) {
   const [totalPrice, setTotalPrice] = useState(0);
 
   useEffect(() => {
-    const totalPrice = sum(cartItems.map(item => item.price));
+    const totalPrice = sum(cartItems.map((item) => item.price));
     setTotalPrice(totalPrice);
   }, [cartItems]);
 
-  const sum = items => {
-    return items.reduce(
+  const sum = (items) => {
+    const total = items.reduce(
       (prevValue, curValue) => prevValue + parseFloat(curValue),
       0
     );
+    return Math.round(total * 10) / 10;
+  };
+
+  const removeFromCart = (medicineId) => {
+    const filteredCartItems = cartItems.filter(
+      (item) => item.medicine._id !== medicineId
+    );
+    setCartItems(filteredCartItems);
   };
 
   const changeQuantity = (medicineId, newQuantity) => {
-    const cartItem = cartItems.find(item => item.medicine._id === medicineId);
+    const cartItem = cartItems.find((item) => item.medicine._id === medicineId);
 
     if (!cartItem) return;
 
@@ -36,14 +44,14 @@ export function CartProvider({ children }) {
     };
 
     setCartItems(
-      cartItems.map(item =>
+      cartItems.map((item) =>
         item.medicine._id === medicineId ? changedCartItem : item
       )
     );
   };
 
-  const addToCart = medicine => {
-    setCartItems(prevCartItems => [
+  const addToCart = (medicine) => {
+    setCartItems((prevCartItems) => [
       ...prevCartItems,
       { medicine, quantity: 1, price: medicine.price },
     ]);
@@ -59,6 +67,7 @@ export function CartProvider({ children }) {
       value={{
         cart: { cartItems, totalPrice },
         addToCart,
+        removeFromCart,
         changeQuantity,
         clearCart,
       }}

@@ -1,11 +1,11 @@
-import React from 'react';
+import React from "react";
 import {
   FormContainer,
   FormGroup,
   Input,
   Label,
   TextArea,
-} from './CartForm.styled';
+} from "./CartForm.styled";
 
 const CartForm = ({ formData, handleInputChange }) => {
   return (
